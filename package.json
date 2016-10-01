@@ -1,0 +1,23 @@
+{
+  "name": "wac-nginx-config-templater",
+  "version": "0.0.0",
+  "description": "Template nginx config from etcd values for the wac stack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chad-autry/wac-nginx-config-templater.git"
+  },
+  "keywords": [
+    "Docker",
+    "acme"
+  ],
+  "author": {
+    "name": "Chad Autry",
+    "email": "chad.autry@gmail.com",
+    "url": "http://chad-autry.github.io/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chad-autry/wac-nginx-config-templater/issues"
+  },
+  "homepage": "https://github.com/chad-autry/wac-nginx-config-templater"
+}

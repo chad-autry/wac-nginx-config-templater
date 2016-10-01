@@ -7,21 +7,21 @@ render_template() {
 }
 
 # Pull the domain from etcd
-domain= /usr/bin/etcdctl get /acme/domain
+domain="$(/usr/bin/etcdctl get /acme/domain)"
 if [ $? -ne 0 ]
 then
     domain="default"
 fi
 
 # Pull the thumbprint from etcd
-thumbprint= /usr/bin/etcdctl get /acme/thumbprint
+thumbprint="$(/usr/bin/etcdctl get /acme/thumbprint)"
 if [ $? -ne 0 ]
 then
     thumbprint="default"
 fi
 
 # Pull the token from etcd
-token= /usr/bin/etcdctl get /acme/token
+token="$(/usr/bin/etcdctl get /acme/token)"
 if [ $? -ne 0 ]
 then
     token="default"

@@ -21,4 +21,4 @@ then
 fi
 
 # Render the template with the values pulled
-render_template /usr/var/nginx.config.template > /usr/var/nginx.config
+render_template /usr/var/nginx.conf.template > /usr/var/nginx.conf

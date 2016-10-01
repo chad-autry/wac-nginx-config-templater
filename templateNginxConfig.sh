@@ -6,6 +6,13 @@ render_template() {
   eval "echo \"$(cat $1)\""
 }
 
+# Pull the domain from etcd
+domain = /usr/bin/etcdctl get /acme/domain
+if [ $? -ne 0 ]
+then
+    domain="default"
+fi
+
 # Pull the thumbprint from etcd
 thumbprint = /usr/bin/etcdctl get /acme/thumbprint
 if [ $? -ne 0 ]

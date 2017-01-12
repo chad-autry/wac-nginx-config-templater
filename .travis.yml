@@ -12,5 +12,5 @@ script:
 - docker build -t chadautry/wac-nginx-config-templater:latest .
 - if [[ ! -z "$TRAVIS_TAG" ]]; then docker tag chadautry/wac-nginx-config-templater:latest chadautry/wac-nginx-config-templater:$TRAVIS_TAG ; fi
 after_success:
-- docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 - docker push chadautry/wac-nginx-config-templater

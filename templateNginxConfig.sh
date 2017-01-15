@@ -24,12 +24,12 @@ then
 fi
 
 # Pull the backend host(s) from etcd
-backend_upstream="    upstream backend {"
+backend_upstream="upstream backend {"
 hosts="$(/usr/bin/etcdctl ls /discovery/backend)"
 while read -r line; do
-    backend_upstream=$backend_upstream$'\n'"        server "${line#/discovery/backend}";"
+    backend_upstream=$backend_upstream$'\n'"        server "${line#/discovery/backend/}";"
 done <<< "$hosts"
-backend_upstream=$backend_upstream"}"
+backend_upstream=$backend_upstream$'\n'"    }"
 
 # Pull the domain from etcd
 domain="$(/usr/bin/etcdctl get /acme/domain)"

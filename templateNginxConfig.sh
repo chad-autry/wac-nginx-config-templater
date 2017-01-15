@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # render a template configuration file
 # expand variables + preserve formatting

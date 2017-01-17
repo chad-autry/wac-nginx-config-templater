@@ -27,7 +27,7 @@ fi
 backend_upstream="upstream backend {"
 hosts="$(/usr/bin/etcdctl ls /discovery/backend)"
 while read -r line; do
-    backend_upstream=$backend_upstream$'\n'"        server "${line#/discovery/backend/}";"
+    backend_upstream=$backend_upstream$'\n'"        server "${line#/discovery/backend/}":8080;"
 done <<< "$hosts"
 backend_upstream=$backend_upstream$'\n'"    }"
 

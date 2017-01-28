@@ -8,7 +8,7 @@ render_template() {
 
 # Set SSL config variable if certs are available
 sslConfig=""
-if [ -e /etc/nginx/ssl/fullchain.pem ]
+if [ -e /etc/nginx/ssl/fullchain.pem && -s /etc/nginx/ssl/fullchain.pem]
 then
     sslConfig="    listen 443 ssl http2;
 

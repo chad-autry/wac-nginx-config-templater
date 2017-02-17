@@ -23,6 +23,13 @@ then
     ssl_stapling_verify on;"
 fi
 
+# Pull the http auth pwd for rethinkdb from etcd
+rethinkdbpwd="$(/usr/bin/etcdctl get /rethinkdb/pwd)"
+
+# Create the password file
+sudo sh -c "echo -n 'admin:' >> /usr/var/nginx/.htpasswd"
+sudo sh -c "openssl $rethinkdbpwd -apr1 >> /usr/var/nginx/.htpasswd"
+
 # Pull the backend host(s) from etcd
 backend_upstream="upstream backend {"
 hosts="$(/usr/bin/etcdctl ls /discovery/backend)"

@@ -37,3 +37,4 @@ server {
 }
 
 ${backend_upstream}
+${rethink_upstream}

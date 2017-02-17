@@ -27,8 +27,8 @@ fi
 rethinkdbpwd="$(/usr/bin/etcdctl get /rethinkdb/pwd)"
 
 # Create the password file
-sudo sh -c "echo -n 'admin:' >> /usr/var/nginx/.htpasswd"
-sudo sh -c "openssl $rethinkdbpwd -apr1 >> /usr/var/nginx/.htpasswd"
+echo -n 'admin:' >> /usr/var/nginx/.htpasswd
+openssl $rethinkdbpwd -apr1 >> /usr/var/nginx/.htpasswd
 
 # Pull the backend host(s) from etcd, rethinkdb proxy is one for one on each backend
 backend_upstream="upstream backend {"

@@ -1,5 +1,5 @@
 FROM gliderlabs/alpine:3.4
-RUN apk add --no-cache bash curl openssl-dev
+RUN apk add --no-cache bash curl openssl
 COPY templateNginxConfig.sh /usr/bin/templateNginxConfig.sh
 RUN chmod +x /usr/bin/templateNginxConfig.sh
 COPY nginx.conf.template /usr/var/nginx.conf.template

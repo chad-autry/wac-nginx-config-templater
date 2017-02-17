@@ -30,13 +30,16 @@ rethinkdbpwd="$(/usr/bin/etcdctl get /rethinkdb/pwd)"
 sudo sh -c "echo -n 'admin:' >> /usr/var/nginx/.htpasswd"
 sudo sh -c "openssl $rethinkdbpwd -apr1 >> /usr/var/nginx/.htpasswd"
 
-# Pull the backend host(s) from etcd
+# Pull the backend host(s) from etcd, rethinkdb proxy is one for one on each backend
 backend_upstream="upstream backend {"
+rethink_upstream="upstream rethink {"
 hosts="$(/usr/bin/etcdctl ls /discovery/backend)"
 while read -r line; do
     backend_upstream=$backend_upstream$'\n'"        server "${line#/discovery/backend/}":8080;"
+    rethink_upstream=$rethink_upstream$'\n'"        server "${line#/discovery/backend/}":8082;"
 done <<< "$hosts"
 backend_upstream=$backend_upstream$'\n'"    }"
+rethink_upstream=$rethink_upstream$'\n'"    }"
 
 # Pull the domain from etcd
 domain="$(/usr/bin/etcdctl get /acme/domain)"

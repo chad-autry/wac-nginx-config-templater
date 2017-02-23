@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.4
+FROM alpine:3.5
 RUN apk add --no-cache bash curl openssl
 COPY templateNginxConfig.sh /usr/bin/templateNginxConfig.sh
 RUN chmod +x /usr/bin/templateNginxConfig.sh

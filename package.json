@@ -1,6 +1,6 @@
 {
   "name": "wac-nginx-config-templater",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Template nginx config from etcd values for the wac stack",
   "repository": {
     "type": "git",

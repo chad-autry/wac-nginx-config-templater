@@ -30,16 +30,25 @@ rethinkdbpwd="$(/usr/bin/etcdctl get /rethinkdb/pwd)"
 echo -n 'admin:' > /usr/var/nginx/.htpasswd
 echo $rethinkdbpwd | openssl passwd -stdin -apr1 >> /usr/var/nginx/.htpasswd
 
-# Pull the backend host(s) from etcd, rethinkdb proxy is one for one on each backend
-backend_upstream="upstream backend {"
-rethink_upstream="upstream rethink {"
-hosts="$(/usr/bin/etcdctl ls /discovery/backend)"
+locations=""
+upstreams=""
+routes="$(/usr/bin/etcdctl ls /discovery)"
 while read -r line; do
-    backend_upstream=$backend_upstream$'\n'"        server "${line#/discovery/backend/}":8080;"
-    rethink_upstream=$rethink_upstream$'\n'"        server "${line#/discovery/backend/}":8082;"
-done <<< "$hosts"
-backend_upstream=$backend_upstream$'\n'"    }"
-rethink_upstream=$rethink_upstream$'\n'"    }"
+    private="$(/usr/bin/etcdctl get /discovery/$line/private)"
+    strip="$(/usr/bin/etcdctl get /discovery/$line/strip)"
+    hosts="$(/usr/bin/etcdctl ls /discovery/$line)"
+    upstream=""
+    while read -r line2; do
+        upstream=$upstream$'\n'"        server $(/usr/bin/etcdctl get /discovery/$line/$line2/host):$(/usr/bin/etcdctl get /discovery/$line/$line2/port);"
+    done <<< "$hosts"
+    if [ -n "$upstream" ]; 
+    then
+       upstream=$"upstream $line {"$upstream$'\n'"    }"
+       upstreams=$upstreams$'\n'$upstream
+       location=
+       locations=$locations$'\n'
+    fi
+done <<< "$routes"
 
 # Pull the domain from etcd
 domain="$(/usr/bin/etcdctl get /acme/domain)"

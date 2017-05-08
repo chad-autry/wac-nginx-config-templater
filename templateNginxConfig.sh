@@ -56,7 +56,7 @@ while read -r line; do
        upstream="upstream $line {"$upstream$'\n'"    }"
        upstreams=$upstreams$'\n'$upstream$'\n'
        location=""
-       if ["$strip" = "true"]
+       if ["$strip" = "true" ]
        then
            location="    location /$line/ {"
        else
@@ -65,14 +65,14 @@ while read -r line; do
        location=$location$'\n'"        if (\$scheme = http) {"
        location=$location$'\n'"             return 301 https://\$server_name\$request_uri;"
        location=$location$'\n'"        }"
-       if ["$strip" = "true"]
+       if ["$strip" = "true" ]
        then
            location=$location$'\n'"        proxy_pass http://$line/;"
        else
            location=$location$'\n'"        proxy_pass http://$line;"
        fi
        
-       if ["$private" = "true"]
+       if ["$private" = "true" ]
        then
            location=$location$'\n'"        auth_basic \"Restricted Content\";"
            location=$location$'\n'"        auth_basic_user_file /usr/var/nginx/.htpasswd;"

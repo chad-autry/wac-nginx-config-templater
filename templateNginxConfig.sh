@@ -36,17 +36,39 @@ routes="$(/usr/bin/etcdctl ls /discovery)"
 while read -r line; do
     private="$(/usr/bin/etcdctl get /discovery/$line/private)"
     strip="$(/usr/bin/etcdctl get /discovery/$line/strip)"
-    hosts="$(/usr/bin/etcdctl ls /discovery/$line)"
+    hosts="$(/usr/bin/etcdctl ls /discovery/$line/hosts)"
     upstream=""
     while read -r line2; do
         upstream=$upstream$'\n'"        server $(/usr/bin/etcdctl get /discovery/$line/$line2/host):$(/usr/bin/etcdctl get /discovery/$line/$line2/port);"
     done <<< "$hosts"
+    # If there were upstream host elements, concatenate them to the nginx upstreams element, and concatenate the location
     if [ -n "$upstream" ]; 
     then
-       upstream=$"upstream $line {"$upstream$'\n'"    }"
-       upstreams=$upstreams$'\n'$upstream
-       location=
-       locations=$locations$'\n'
+       upstream="upstream $line {"$upstream$'\n'"    }"
+       upstreams=$upstreams$'\n'$upstream$'\n'
+       location=""
+       if ["$strip" = "true"]
+       then
+           location="    location /$line/ {"
+       else
+           location="    location /$line {"
+       fi
+       location=$location$'\n'"        if (\$scheme = http) {"
+       location=$location$'\n'"             return 301 https://\$server_name\$request_uri;"
+       location=$location$'\n'"        }"
+       if ["$strip" = "true"]
+       then
+           $location$'\n'"        proxy_pass http://$line/;"
+       else
+           $location$'\n'"        proxy_pass http://$line;"
+       fi
+       
+       if ["$private" = "true"]
+       then
+           $location$'\n'"        auth_basic \"Restricted Content\";"
+           $location$'\n'"        auth_basic_user_file /usr/var/nginx/.htpasswd;"
+       fi
+       locations=$locations$'\n'$location$'\n'
     fi
 done <<< "$routes"
 

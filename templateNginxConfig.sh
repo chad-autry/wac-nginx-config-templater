@@ -34,11 +34,18 @@ locations=""
 upstreams=""
 routes="$(/usr/bin/etcdctl ls /discovery)"
 while read -r line; do
+    # Break out of the loop, if nothing was registered under discovery
+    if [[ $line == Error* ]]
+        break
+    fi
     private="$(/usr/bin/etcdctl get /discovery/$line/private)"
     strip="$(/usr/bin/etcdctl get /discovery/$line/strip)"
     hosts="$(/usr/bin/etcdctl ls /discovery/$line/hosts)"
     upstream=""
     while read -r line2; do
+        if [[ $line2 == Error* ]]
+            break
+        fi
         upstream=$upstream$'\n'"        server $(/usr/bin/etcdctl get /discovery/$line/$line2/host):$(/usr/bin/etcdctl get /discovery/$line/$line2/port);"
     done <<< "$hosts"
     # If there were upstream host elements, concatenate them to the nginx upstreams element, and concatenate the location
@@ -58,16 +65,17 @@ while read -r line; do
        location=$location$'\n'"        }"
        if ["$strip" = "true"]
        then
-           $location$'\n'"        proxy_pass http://$line/;"
+           location=$location$'\n'"        proxy_pass http://$line/;"
        else
-           $location$'\n'"        proxy_pass http://$line;"
+           location=$location$'\n'"        proxy_pass http://$line;"
        fi
        
        if ["$private" = "true"]
        then
-           $location$'\n'"        auth_basic \"Restricted Content\";"
-           $location$'\n'"        auth_basic_user_file /usr/var/nginx/.htpasswd;"
+           location=$location$'\n'"        auth_basic \"Restricted Content\";"
+           location=$location$'\n'"        auth_basic_user_file /usr/var/nginx/.htpasswd;"
        fi
+       location=$location$'\n'"    }"
        locations=$locations$'\n'$location$'\n'
     fi
 done <<< "$routes"

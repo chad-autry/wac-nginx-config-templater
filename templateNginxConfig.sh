@@ -36,6 +36,7 @@ routes="$(/usr/bin/etcdctl ls /discovery)"
 while read -r line; do
     # Break out of the loop, if nothing was registered under discovery
     if [[ $line == Error* ]]
+    then
         break
     fi
     private="$(/usr/bin/etcdctl get /discovery/$line/private)"
@@ -44,12 +45,13 @@ while read -r line; do
     upstream=""
     while read -r line2; do
         if [[ $line2 == Error* ]]
+        then
             break
         fi
         upstream=$upstream$'\n'"        server $(/usr/bin/etcdctl get /discovery/$line/$line2/host):$(/usr/bin/etcdctl get /discovery/$line/$line2/port);"
     done <<< "$hosts"
     # If there were upstream host elements, concatenate them to the nginx upstreams element, and concatenate the location
-    if [ -n "$upstream" ]; 
+    if [ -n "$upstream" ]
     then
        upstream="upstream $line {"$upstream$'\n'"    }"
        upstreams=$upstreams$'\n'$upstream$'\n'

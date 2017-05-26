@@ -36,36 +36,37 @@ routes="$(/usr/bin/etcdctl ls /discovery)"
 if [ $? -eq 0 ]
 then
     while read -r line; do
-        private="$(/usr/bin/etcdctl get /discovery/$line/private)"
-        strip="$(/usr/bin/etcdctl get /discovery/$line/strip)"
+        private="$(/usr/bin/etcdctl get /discovery/$route/private)"
+        strip="$(/usr/bin/etcdctl get /discovery/$route/strip)"
+        route=${line#/discovery/}
         upstream=""
-        hosts="$(/usr/bin/etcdctl ls /discovery/$line/hosts)"
+        hosts="$(/usr/bin/etcdctl ls $line/hosts)"
         if [ $? -eq 0 ]
         then 
             while read -r line2; do
-                upstream=$upstream$'\n'"        server $(/usr/bin/etcdctl get /discovery/$line/hosts/$line2/host):$(/usr/bin/etcdctl get /discovery/$line/hosts/$line2/port);"
+                upstream=$upstream$'\n'"        server $(/usr/bin/etcdctl get $line2/host):$(/usr/bin/etcdctl get $line2/port);"
             done <<< "$hosts"
         fi
         # If there were upstream host elements, concatenate them to the nginx upstreams element, and concatenate the location
         if [ -n "$upstream" ]
         then
-            upstream="upstream $line {"$upstream$'\n'"    }"
+            upstream="upstream $route {"$upstream$'\n'"    }"
             upstreams=$upstreams$'\n'$upstream$'\n'
             location=""
             if [ "$strip" = "true" ]
             then
-                location="    location /$line/ {"
+                location="    location /$route/ {"
             else
-                location="    location /$line {"
+                location="    location /$route {"
             fi
             location=$location$'\n'"        if (\$scheme = http) {"
             location=$location$'\n'"             return 301 https://\$server_name\$request_uri;"
             location=$location$'\n'"        }"
             if [ "$strip" = "true" ]
             then
-                location=$location$'\n'"        proxy_pass http://$line/;"
+                location=$location$'\n'"        proxy_pass http://$route/;"
             else
-                location=$location$'\n'"        proxy_pass http://$line;"
+                location=$location$'\n'"        proxy_pass http://$route;"
             fi
        
             if [ "$private" = "true" ]

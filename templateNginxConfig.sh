@@ -36,8 +36,12 @@ routes="$(/usr/bin/etcdctl ls /discovery)"
 if [ $? -eq 0 ]
 then
     while read -r line; do
-        private="$(/usr/bin/etcdctl get /discovery/$route/private)"
-        strip="$(/usr/bin/etcdctl get /discovery/$route/strip)"
+        if [ "$line" = "/discovery/watched" ]
+        then
+            continue
+        fi
+        private="$(/usr/bin/etcdctl get $line/private)"
+        strip="$(/usr/bin/etcdctl get $line/strip)"
         route=${line#/discovery/}
         upstream=""
         hosts="$(/usr/bin/etcdctl ls $line/hosts)"

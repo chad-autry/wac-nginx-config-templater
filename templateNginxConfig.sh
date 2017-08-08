@@ -85,7 +85,7 @@ then
 fi
 
 # Pull the domain from etcd
-domain="$(/usr/bin/etcdctl get /acme/domain)"
+domain="$(/usr/bin/etcdctl get /domain/name)"
 if [ $? -ne 0 ]
 then
     domain="default"

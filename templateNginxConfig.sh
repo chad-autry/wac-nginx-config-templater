@@ -48,17 +48,7 @@ then
         if [ $? -eq 0 ]
         then 
             while read -r line2; do
-                host="$(/usr/bin/etcdctl get $line2/host)"
-                if [ $? -eq 0 ]
-                then
-                    continue;
-                fi
-                port="$(/usr/bin/etcdctl get $line2/port)"
-                if [ $? -eq 0 ]
-                then
-                    continue;
-                fi
-                upstream=$upstream$'\n'"        server $host:$port;"
+                upstream=$upstream$'\n'"        server $(/usr/bin/etcdctl get $line2/host):$(/usr/bin/etcdctl get $line2/port);"
             done <<< "$hosts"
         fi
         # If there were upstream host elements, concatenate them to the nginx upstreams element, and concatenate the location

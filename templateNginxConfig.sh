@@ -58,7 +58,8 @@ then
                 then
                     continue;
                 fi
-                upstream=$upstream$'\n'"        server $host:$port;"            done <<< "$hosts"
+                upstream=$upstream$'\n'"        server $host:$port;"
+            done <<< "$hosts"
         fi
         # If there were upstream host elements, concatenate them to the nginx upstreams element, and concatenate the location
         if [ -n "$upstream" ]

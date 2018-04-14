@@ -87,6 +87,8 @@ then
             then
                 location=$location$'\n'"        auth_basic \"Restricted Content\";"
                 location=$location$'\n'"        auth_basic_user_file /usr/var/nginx/.htpasswd;"
+                location=$location$'\n'"        proxy_set_header X-WEBAUTH-USER $remote_user;"
+                location=$location$'\n'"        proxy_set_header Authorization "";"
             fi
             location=$location$'\n'"    }"
             locations=$locations$'\n'$location$'\n'

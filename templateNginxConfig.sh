@@ -32,11 +32,11 @@ echo $rethinkdbpwd | openssl passwd -stdin -apr1 >> /usr/var/nginx/.htpasswd
 
 locations=""
 upstreams=""
-routes="$(/usr/bin/etcdctl ls /discovery)"
+routes="$(/usr/bin/etcdctl ls /route_discovery)"
 if [ $? -eq 0 ]
 then
     while read -r line; do
-        if [ "$line" = "/discovery/watched" ]
+        if [ "$line" = "/route_discovery/watched" ]
         then
             continue
         fi
@@ -44,7 +44,7 @@ then
         strip="$(/usr/bin/etcdctl get $line/strip)"
         route=${line#/discovery/}
         upstream=""
-        hosts="$(/usr/bin/etcdctl ls $line/hosts)"
+        services="$(/usr/bin/etcdctl ls $line/services)"
         if [ $? -eq 0 ]
         then 
             while read -r line2; do
@@ -59,7 +59,7 @@ then
                     continue;
                 fi
                 upstream=$upstream$'\n'"        server $host:$port;"
-            done <<< "$hosts"
+            done <<< "$services"
         fi
         # If there were upstream host elements, concatenate them to the nginx upstreams element, and concatenate the location
         if [ -n "$upstream" ]

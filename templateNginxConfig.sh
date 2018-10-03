@@ -42,7 +42,7 @@ then
         fi
         private="$(/usr/bin/etcdctl get $line/private)"
         strip="$(/usr/bin/etcdctl get $line/strip)"
-        route=${line#/discovery/}
+        route=${line#/route_discovery/}
         upstream=""
         services="$(/usr/bin/etcdctl ls $line/services)"
         if [ $? -eq 0 ]

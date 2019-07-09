@@ -71,16 +71,12 @@ then
             upstream="upstream $route {"$upstream$'\n'"    }"
             upstreams=$upstreams$'\n'$upstream$'\n'
 
-            location="    location /$route$upstreamroute {"
+            location="    location /$route {"
             location=$location$'\n'"        if (\$scheme = http) {"
             location=$location$'\n'"             return 301 https://\$server_name\$request_uri;"
             location=$location$'\n'"        }"
-            if [ "$strip" = "true" ]
-            then
-                location=$location$'\n'"        proxy_pass http://$route/;"
-            else
-                location=$location$'\n'"        proxy_pass http://$route;"
-            fi
+            location=$location$'\n'"        proxy_pass http://$route$upstreamroute;"
+
        
             if [ "$private" = "true" ]
             then

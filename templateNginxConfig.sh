@@ -71,7 +71,7 @@ then
             upstream="upstream $route {"$upstream$'\n'"    }"
             upstreams=$upstreams$'\n'$upstream$'\n'
 
-            location="    location /$route {"
+            location="    location /$route/? {"
             location=$location$'\n'"        if (\$scheme = http) {"
             location=$location$'\n'"             return 301 https://\$server_name\$request_uri;"
             location=$location$'\n'"        }"

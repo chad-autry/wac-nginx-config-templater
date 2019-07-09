@@ -41,7 +41,11 @@ then
             continue
         fi
         private="$(/usr/bin/etcdctl get $line/private)"
-        strip="$(/usr/bin/etcdctl get $line/strip)"
+        upstreamroute="$(/usr/bin/etcdctl get $line/upstreamRoute)"
+        if [ $? -ne 0 ]
+        then
+            upstreamroute="";
+        fi
         route=${line#/route_discovery/}
         upstream=""
         services="$(/usr/bin/etcdctl ls $line/services)"
@@ -66,13 +70,8 @@ then
         then
             upstream="upstream $route {"$upstream$'\n'"    }"
             upstreams=$upstreams$'\n'$upstream$'\n'
-            location=""
-            if [ "$strip" = "true" ]
-            then
-                location="    location /$route/ {"
-            else
-                location="    location /$route {"
-            fi
+
+            location="    location /$route$upstreamroute {"
             location=$location$'\n'"        if (\$scheme = http) {"
             location=$location$'\n'"             return 301 https://\$server_name\$request_uri;"
             location=$location$'\n'"        }"

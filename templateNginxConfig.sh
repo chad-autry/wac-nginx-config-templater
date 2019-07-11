@@ -46,6 +46,18 @@ then
         then
             upstreamroute="";
         fi
+        protocol="$(/usr/bin/etcdctl get $line/protocol)"
+        if [ $? -ne 0 ]
+        then
+            protocol="http";
+        fi
+        proxyHostHeader="$(/usr/bin/etcdctl get $line1/proxyHostHeader)"
+        if [ $? -ne 0 ]
+        then
+            proxyHostHeader="";
+        else
+            proxyHostHeader="proxy_set_header Host $proxyHostHeader;";
+        fi
         route=${line#/route_discovery/}
         upstream=""
         services="$(/usr/bin/etcdctl ls $line/services)"
@@ -62,6 +74,7 @@ then
                 then
                     continue;
                 fi
+                
                 upstream=$upstream$'\n'"        server $host:$port;"
             done <<< "$services"
         fi
@@ -75,7 +88,8 @@ then
             location=$location$'\n'"        if (\$scheme = http) {"
             location=$location$'\n'"             return 301 https://\$server_name\$request_uri;"
             location=$location$'\n'"        }"
-            location=$location$'\n'"        proxy_pass http://$route$upstreamroute;"
+            location=$location$'\n'"        $proxyHostHeader"
+            location=$location$'\n'"        proxy_pass $protocol://$route$upstreamroute;"
 
        
             if [ "$private" = "true" ]

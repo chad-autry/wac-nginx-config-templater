@@ -51,7 +51,7 @@ then
         then
             protocol="http";
         fi
-        proxyHostHeader="$(/usr/bin/etcdctl get $line1/proxyHostHeader)"
+        proxyHostHeader="$(/usr/bin/etcdctl get $line/proxyHostHeader)"
         if [ $? -ne 0 ]
         then
             proxyHostHeader="";
